@@ -116,6 +116,73 @@ textarea.form-control {
     background: #fff;
 }
 
+/* Стили для предпросмотра */
+.resume-template {
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
+.resume-header {
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.resume-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.resume-header p {
+    font-size: 0.9rem;
+    color: #666;
+}
+.resume-section {
+    margin-bottom: 20px;
+}
+.resume-section h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.resume-section p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* template1 */
+.template1 {
+    border: 1px solid #007bff;
+    background: #fff;
+}
+.template1 .resume-header {
+    background: #f4f4f4;
+}
+.template1 .resume-section h3 {
+    color: #007bff;
+}
+
+/* template2 */
+.template2 {
+    border: 1px solid #28a745;
+    background: #f9f9f9;
+}
+.template2 .resume-header p {
+    color: #fff;
+}
+.template2 .resume-header {
+    background: #28a745;
+    color: #fff;
+}
+.template2 .resume-header h2 {
+    color: #fff;
+}
+.template2 .resume-section h3 {
+    color: #28a745;
+    border-bottom: 2px solid #28a745;
+    padding-bottom: 5px;
+}
+
 /* Адаптив */
 @media (max-width: 767px) {
     .resume_main {
