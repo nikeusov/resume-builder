@@ -40,12 +40,19 @@ if (resumeForm) {
 document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
+        // Очистка сообщения об ошибке при любом изменении в форме
+        registerForm.addEventListener('input', function() {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = '';
+        });
+
+        // Обработка отправки формы
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
             const form = this;
             const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = '';
+            errorMessage.textContent = ''; // Оставляем очистку и здесь для надежности
 
             const formData = new FormData(form);
 
