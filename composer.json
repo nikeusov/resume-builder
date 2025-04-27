@@ -1,0 +1,21 @@
+{
+    "name": "nikot/resume-builder",
+    "description": "A web application for creating and downloading resumes",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Nikot\\ResumeBuilder\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Усов Н.",
+            "email": "absolutcdokrd@yandex.ru"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "dompdf/dompdf": "^3.1"
+    }
+}
