@@ -36,14 +36,22 @@ if (resumeForm) {
     });
 }
 
-// Обработка формы регистрации
+// Обработка форм регистрации и логина
 document.addEventListener('DOMContentLoaded', function() {
+    // Обработка формы регистрации
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
-        // Очистка сообщения об ошибке при любом изменении в форме
-        registerForm.addEventListener('input', function() {
+        // Очистка сообщений и подсветки при изменении полей
+        registerForm.addEventListener('input', function(e) {
             const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
             errorMessage.textContent = '';
+            errorMessage.classList.remove('active');
+            successMessage.textContent = '';
+            successMessage.classList.remove('active');
+            if (e.target.name === 'email') {
+                e.target.style.borderColor = '';
+            }
         });
 
         // Обработка отправки формы
@@ -52,7 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const form = this;
             const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = ''; // Оставляем очистку и здесь для надежности
+            const successMessage = document.getElementById('success-message');
+            errorMessage.textContent = '';
+            errorMessage.classList.remove('active');
+            successMessage.textContent = '';
+            successMessage.classList.remove('active');
 
             const formData = new FormData(form);
 
@@ -63,19 +75,81 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    errorMessage.style.color = '#28a745';
-                    errorMessage.textContent = 'Registration successful!';
+                    successMessage.textContent = 'Registration successful!';
+                    successMessage.classList.add('active');
                     form.reset();
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 1500);
                 } else {
-                    errorMessage.style.color = '#dc3545';
                     errorMessage.textContent = data.message;
+                    errorMessage.classList.add('active');
+                    if (data.message === 'User with this email is already registered') {
+                        form.querySelector('input[name="email"]').style.borderColor = '#dc3545';
+                    }
                 }
             })
             .catch(error => {
                 errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.add('active');
+            });
+        });
+    }
+
+    // Обработка формы логина
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        // Очистка сообщений и подсветки при изменении полей
+        loginForm.addEventListener('input', function(e) {
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            errorMessage.textContent = '';
+            errorMessage.classList.remove('active');
+            successMessage.textContent = '';
+            successMessage.classList.remove('active');
+            if (e.target.name === 'email') {
+                e.target.style.borderColor = '';
+            }
+        });
+
+        // Обработка отправки формы
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = this;
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            errorMessage.textContent = '';
+            errorMessage.classList.remove('active');
+            successMessage.textContent = '';
+            successMessage.classList.remove('active');
+
+            const formData = new FormData(form);
+
+            fetch('php/login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    successMessage.textContent = 'Login successful!';
+                    successMessage.classList.add('active');
+                    form.reset();
+                    setTimeout(() => {
+                        window.location.href = 'resume_form.php';
+                    }, 1500);
+                } else {
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.add('active');
+                    if (data.message === 'Invalid email or password') {
+                        form.querySelector('input[name="email"]').style.borderColor = '#dc3545';
+                    }
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.add('active');
             });
         });
     }

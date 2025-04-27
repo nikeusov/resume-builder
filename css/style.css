@@ -101,6 +101,32 @@ textarea.form-control {
     text-transform: uppercase;
     font-weight: bold;
 }
+.error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-weight: 500;
+    max-height: 0; 
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out, margin 0.3s ease-in-out;
+}
+.error-message.active {
+    max-height: 50px; 
+    padding: 5px 0;
+    margin-top: 5px;
+}
+.success-message {
+    color: #28a745; 
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+.success-message.active {
+    max-height: 50px;
+    padding: 5px 0;
+}
 
 /* Стили для превью */
 .preview-title {
