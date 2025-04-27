@@ -49,3 +49,82 @@ body {
 .main-logo {
     width: 50%;
 }
+
+/* Стили для формы */
+.resume_main {
+    margin-top: 4em;
+}
+.form-select,
+.form-control {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    padding: 10px;
+    color: #666;
+    background: #fff;
+}
+.form-select:focus,
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: none;
+    outline: none;
+}
+.form-select {
+    appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L2 5h8z"/></svg>') no-repeat right 10px center;
+    background-size: 12px;
+}
+textarea.form-control {
+    resize: none;
+}
+.save-resume-btn {
+    width: 100%;
+    max-width: 200px;
+    background: #007bff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    display: block;
+    margin: 0 auto;
+}
+.save-resume-btn:hover {
+    background: #0056b3;
+}
+.resume_main-title {
+    margin: 25px 0
+}
+.resume_main-h1 {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Стили для превью */
+.preview-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.preview-box {
+    border: 2px solid #000;
+    height: 520px; 
+    background: #fff;
+}
+
+/* Адаптив */
+@media (max-width: 767px) {
+    .resume_main {
+        margin-top: 1em;
+    }
+    .col-md-6 {
+        margin-bottom: 20px;
+    }
+    .preview-box {
+        height: 300px;
+    }
+}
