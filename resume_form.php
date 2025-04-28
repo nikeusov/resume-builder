@@ -1,12 +1,13 @@
 <?php
-// session_start();
-// if (!isset($_SESSION['user_id'])) {
-//     header("Location: login.html");
-//     exit;
-// }
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.html");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +16,28 @@
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <div class="container resume_main">
+        <div class="text-end mb-4">
+            <a href="php/logout.php" class="btn btn-danger">Logout</a>
+        </div>
+
+        <?php if (isset($_GET['success'])): ?>
+        <div id="success-message" class="success-message mt-2">
+            <?php echo htmlspecialchars('Resume saved successfully!'); ?></div>
+        <?php elseif (isset($_GET['error'])): ?>
+        <div id="error-message" class="error-message mt-2">
+            <?php
+        if ($_GET['error'] == 'required_fields') {
+            echo htmlspecialchars('All required fields must be filled.');
+        } else {
+            echo htmlspecialchars('An error occurred while saving the resume.');
+        }
+        ?>
+        </div>
+        <?php endif; ?>
+
         <div class="resume_main-title">
             <h1 class="resume_main-h1">Create your best resume</h1>
         </div>
@@ -61,4 +82,5 @@
     <script src="js/script.js"></script>
     <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

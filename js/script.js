@@ -154,3 +154,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const successMessage = document.getElementById('success-message');
+    if (successMessage && successMessage.textContent) {
+        successMessage.classList.add('active');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const errorMessage = document.getElementById('error-message');
+    if (errorMessage && errorMessage.textContent) {
+        errorMessage.classList.add('active');
+    }
+});
