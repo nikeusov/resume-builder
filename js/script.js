@@ -1,7 +1,7 @@
 // Обработка предпросмотра резюме
 const resumeForm = document.getElementById('resumeForm');
 if (resumeForm) {
-    resumeForm.addEventListener('input', function() {
+    resumeForm.addEventListener('input', function () {
         const name = document.querySelector('input[name="name"]').value;
         const email = document.querySelector('input[name="email"]').value;
         const phone = document.querySelector('input[name="phone"]').value;
@@ -36,7 +36,7 @@ if (resumeForm) {
     });
 
     // Очистка сообщений при изменении полей
-    resumeForm.addEventListener('input', function() {
+    resumeForm.addEventListener('input', function () {
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
         errorMessage.textContent = '';
@@ -46,7 +46,7 @@ if (resumeForm) {
     });
 
     // Обработка отправки формы
-    resumeForm.addEventListener('submit', function(e) {
+    resumeForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const form = this;
@@ -57,7 +57,6 @@ if (resumeForm) {
         successMessage.textContent = '';
         successMessage.classList.remove('active');
 
-        // Валидация на фронтенде
         const name = form.querySelector('input[name="name"]').value.trim();
         const email = form.querySelector('input[name="email"]').value.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,37 +76,37 @@ if (resumeForm) {
         const formData = new FormData(form);
 
         fetch('php/save_resume.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                successMessage.textContent = data.message;
-                successMessage.classList.add('active');
-                form.reset();
-                // Очищаем предпросмотр после сброса формы
-                const preview = document.getElementById('preview');
-                preview.innerHTML = '';
-            } else {
-                errorMessage.textContent = data.message;
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    successMessage.textContent = data.message;
+                    successMessage.classList.add('active');
+                    form.reset();
+                    // Очищаем предпросмотр после сброса формы
+                    const preview = document.getElementById('preview');
+                    preview.innerHTML = '';
+                } else {
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.add('active');
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'An error occurred. Please try again.';
                 errorMessage.classList.add('active');
-            }
-        })
-        .catch(error => {
-            errorMessage.textContent = 'An error occurred. Please try again.';
-            errorMessage.classList.add('active');
-        });
+            });
     });
 }
 
 // Обработка форм регистрации и логина
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Обработка формы регистрации
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         // Очистка сообщений и подсветки при изменении полей
-        registerForm.addEventListener('input', function(e) {
+        registerForm.addEventListener('input', function (e) {
             const errorMessage = document.getElementById('error-message');
             const successMessage = document.getElementById('success-message');
             errorMessage.textContent = '';
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Обработка отправки формы
-        registerForm.addEventListener('submit', function(e) {
+        registerForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const form = this;
@@ -134,30 +133,30 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(form);
 
             fetch('php/register.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    successMessage.textContent = 'Registration successful!';
-                    successMessage.classList.add('active');
-                    form.reset();
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                } else {
-                    errorMessage.textContent = data.message;
-                    errorMessage.classList.add('active');
-                    if (data.message === 'User with this email is already registered') {
-                        form.querySelector('input[name="email"]').style.borderColor = '#dc3545';
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        successMessage.textContent = 'Registration successful!';
+                        successMessage.classList.add('active');
+                        form.reset();
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    } else {
+                        errorMessage.textContent = data.message;
+                        errorMessage.classList.add('active');
+                        if (data.message === 'User with this email is already registered') {
+                            form.querySelector('input[name="email"]').style.borderColor = '#dc3545';
+                        }
                     }
-                }
-            })
-            .catch(error => {
-                errorMessage.textContent = 'An error occurred. Please try again.';
-                errorMessage.classList.add('active');
-            });
+                })
+                .catch(error => {
+                    errorMessage.textContent = 'An error occurred. Please try again.';
+                    errorMessage.classList.add('active');
+                });
         });
     }
 
@@ -165,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         // Очистка сообщений и подсветки при изменении полей
-        loginForm.addEventListener('input', function(e) {
+        loginForm.addEventListener('input', function (e) {
             const errorMessage = document.getElementById('error-message');
             const successMessage = document.getElementById('success-message');
             errorMessage.textContent = '';
@@ -178,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Обработка отправки формы
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const form = this;
@@ -192,29 +191,60 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(form);
 
             fetch('php/login.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    successMessage.textContent = 'Login successful!';
-                    successMessage.classList.add('active');
-                    form.reset();
-                    setTimeout(() => {
-                        window.location.href = 'resume_form.php';
-                    }, 1500);
-                } else {
-                    errorMessage.textContent = data.message;
-                    errorMessage.classList.add('active');
-                    if (data.message === 'Invalid email or password') {
-                        form.querySelector('input[name="email"]').style.borderColor = '#dc3545';
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        successMessage.textContent = 'Login successful!';
+                        successMessage.classList.add('active');
+                        form.reset();
+                        setTimeout(() => {
+                            window.location.href = 'resume_form.php';
+                        }, 1500);
+                    } else {
+                        errorMessage.textContent = data.message;
+                        errorMessage.classList.add('active');
+                        if (data.message === 'Invalid email or password') {
+                            form.querySelector('input[name="email"]').style.borderColor = '#dc3545';
+                        }
                     }
-                }
-            })
-            .catch(error => {
-                errorMessage.textContent = 'An error occurred. Please try again.';
-                errorMessage.classList.add('active');
+                })
+                .catch(error => {
+                    errorMessage.textContent = 'An error occurred. Please try again.';
+                    errorMessage.classList.add('active');
+                });
+        });
+        
+        // Обработка скачивания PDF
+        document.querySelectorAll('.download-pdf-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const resumeId = this.getAttribute('data-resume-id');
+                const pdfErrorMessage = document.getElementById('pdf-error-message');
+                pdfErrorMessage.textContent = '';
+                pdfErrorMessage.classList.remove('active');
+
+                fetch(`php/generate_pdf.php?resume_id=${resumeId}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json().catch(() => {
+                        // Если ответ не JSON, считаем, что PDF успешно сгенерирован
+                        window.location.href = `php/generate_pdf.php?resume_id=${resumeId}`;
+                    }))
+                    .then(data => {
+                        if (data.success === false) {
+                            pdfErrorMessage.textContent = data.message;
+                            pdfErrorMessage.classList.add('active');
+                        }
+                    })
+                    .catch(error => {
+                        pdfErrorMessage.textContent = 'An error occurred while downloading the PDF.';
+                        pdfErrorMessage.classList.add('active');
+                    });
             });
         });
     }
