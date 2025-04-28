@@ -1,6 +1,9 @@
 <?php
+header('Content-Type: application/json');
 session_start();
 require 'db_connect.php';
+
+$response = ['success' => false, 'message' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -13,21 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['user_id'])) {
     $template = trim($_POST['template']);
 
     if (empty($name) || empty($email)) {
-        header("Location: ../resume_form.php?error=required_fields");
+        $response['message'] = 'All required fields must be filled.';
+        echo json_encode($response);
         exit;
     }
 
     try {
         $stmt = $pdo->prepare("INSERT INTO resumes (user_id, name, email, phone, education, experience, skills, template) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$user_id, $name, $email, $phone, $education, $experience, $skills, $template]);
-        header("Location: ../resume_form.php?success=1");
-        exit;
+        $response['success'] = true;
+        $response['message'] = 'Resume saved successfully!';
     } catch (PDOException $e) {
-        header("Location: ../resume_form.php?error=db_error");
-        exit;
+        $response['message'] = 'Database error: ' . $e->getMessage();
     }
 } else {
-    header("Location: ../login.html");
-    exit;
+    $response['message'] = 'Unauthorized access.';
 }
+
+echo json_encode($response);
+exit;
 ?>

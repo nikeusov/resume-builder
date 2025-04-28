@@ -34,6 +34,71 @@ if (resumeForm) {
             </div>
         `;
     });
+
+    // Очистка сообщений при изменении полей
+    resumeForm.addEventListener('input', function() {
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        errorMessage.textContent = '';
+        errorMessage.classList.remove('active');
+        successMessage.textContent = '';
+        successMessage.classList.remove('active');
+    });
+
+    // Обработка отправки формы
+    resumeForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        errorMessage.textContent = '';
+        errorMessage.classList.remove('active');
+        successMessage.textContent = '';
+        successMessage.classList.remove('active');
+
+        // Валидация на фронтенде
+        const name = form.querySelector('input[name="name"]').value.trim();
+        const email = form.querySelector('input[name="email"]').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!name || !email) {
+            errorMessage.textContent = 'All required fields must be filled.';
+            errorMessage.classList.add('active');
+            return;
+        }
+
+        if (!emailRegex.test(email)) {
+            errorMessage.textContent = 'Please enter a valid email address.';
+            errorMessage.classList.add('active');
+            return;
+        }
+
+        const formData = new FormData(form);
+
+        fetch('php/save_resume.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                successMessage.textContent = data.message;
+                successMessage.classList.add('active');
+                form.reset();
+                // Очищаем предпросмотр после сброса формы
+                const preview = document.getElementById('preview');
+                preview.innerHTML = '';
+            } else {
+                errorMessage.textContent = data.message;
+                errorMessage.classList.add('active');
+            }
+        })
+        .catch(error => {
+            errorMessage.textContent = 'An error occurred. Please try again.';
+            errorMessage.classList.add('active');
+        });
+    });
 }
 
 // Обработка форм регистрации и логина
@@ -152,19 +217,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorMessage.classList.add('active');
             });
         });
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    const successMessage = document.getElementById('success-message');
-    if (successMessage && successMessage.textContent) {
-        successMessage.classList.add('active');
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    const errorMessage = document.getElementById('error-message');
-    if (errorMessage && errorMessage.textContent) {
-        errorMessage.classList.add('active');
     }
 });

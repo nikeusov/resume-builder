@@ -38,6 +38,9 @@ if (!isset($_SESSION['user_id'])) {
         </div>
         <?php endif; ?>
 
+        <div id="success-message" class="success-message mt-2"></div>
+        <div id="error-message" class="error-message mt-2"></div>
+
         <div class="resume_main-title">
             <h1 class="resume_main-h1">Create your best resume</h1>
         </div>
