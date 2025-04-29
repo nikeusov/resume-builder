@@ -67,13 +67,13 @@ require 'php/db_connect.php';
             </div>
         </div>
 
-        <!-- Список сохраненных резюме -->
         <div class="mt-5">
             <h3>Saved Resumes</h3>
             <div id="pdf-success-message" class="success-message mb-2"></div>
             <div id="pdf-error-message" class="error-message mb-2"></div>
+            <div id="saved-resumes-list">
             <?php
-            $stmt = $pdo->prepare("SELECT id, name, created_at FROM resumes WHERE user_id = ?");
+            $stmt = $pdo->prepare("SELECT id, name, created_at FROM resumes WHERE user_id = ? ORDER BY created_at DESC");
             $stmt->execute([$_SESSION['user_id']]);
             $resumes = $stmt->fetchAll();
             if (count($resumes) > 0) {
@@ -94,6 +94,7 @@ require 'php/db_connect.php';
                 echo '<p>No resumes saved yet.</p>';
             }
             ?>
+            </div>
         </div>
     </div>
     <script src="js/script.js"></script>

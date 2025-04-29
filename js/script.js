@@ -1,3 +1,23 @@
+// Функция для обновления нумерации резюме
+function updateResumeNumbers() {
+    const savedResumesList = document.querySelector('#saved-resumes-list');
+    const resumeCards = savedResumesList.querySelectorAll('.card');
+    const totalResumes = resumeCards.length;
+
+    resumeCards.forEach((card, index) => {
+        const numberElement = card.querySelector('.resume-number');
+        if (numberElement) {
+            numberElement.remove(); 
+        }
+        const numberDiv = document.createElement('div');
+        numberDiv.className = 'resume-number';
+        numberDiv.style.fontSize = '14px';
+        numberDiv.style.color = '#666';
+        numberDiv.textContent = `#${totalResumes - index}`; 
+        card.querySelector('.card-body div:first-child').prepend(numberDiv);
+    });
+}
+
 // Обработка предпросмотра резюме
 const resumeForm = document.getElementById('resumeForm');
 if (resumeForm) {
@@ -88,10 +108,10 @@ if (resumeForm) {
                 const preview = document.getElementById('preview');
                 preview.innerHTML = '';
 
-                const savedResumesList = document.querySelector('.mt-5');
+                const savedResumesList = document.querySelector('#saved-resumes-list');
                 const noResumesMessage = savedResumesList.querySelector('p');
                 if (noResumesMessage) {
-                    noResumesMessage.remove();
+                    noResumesMessage.remove(); 
                 }
 
                 const newResume = document.createElement('div');
@@ -107,7 +127,9 @@ if (resumeForm) {
                         </div>
                     </div>
                 `;
-                savedResumesList.appendChild(newResume);
+                savedResumesList.insertBefore(newResume, savedResumesList.firstChild); 
+
+                updateResumeNumbers();
 
                 newResume.querySelector('.download-pdf-btn').addEventListener('click', function () {
                     const resumeId = this.getAttribute('data-resume-id');
@@ -319,4 +341,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    updateResumeNumbers();
 });
