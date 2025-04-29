@@ -19,7 +19,7 @@ function updateResumeNumbers() {
 }
 
 // Обработка предпросмотра резюме
-const resumeForm = document.getElementById('resumeForm');
+const resumeForm = document.getElementById('resumeForm') || document.getElementById('editResumeForm');
 if (resumeForm) {
     resumeForm.addEventListener('input', function () {
         const name = document.querySelector('input[name="name"]').value;
@@ -65,7 +65,7 @@ if (resumeForm) {
         successMessage.classList.remove('active');
     });
 
-    // Обработка отправки формы
+    // Обработка отправки формы 
     resumeForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -94,8 +94,10 @@ if (resumeForm) {
         }
 
         const formData = new FormData(form);
+        const isEditForm = form.id === 'editResumeForm';
+        const url = isEditForm ? 'php/update_resume.php' : 'php/save_resume.php';
 
-        fetch('php/save_resume.php', {
+        fetch(url, {
             method: 'POST',
             body: formData
         })
@@ -104,74 +106,44 @@ if (resumeForm) {
             if (data.success) {
                 successMessage.textContent = data.message;
                 successMessage.classList.add('active');
-                form.reset();
-                const preview = document.getElementById('preview');
-                preview.innerHTML = '';
+                
+                if (isEditForm) {
+                    setTimeout(() => {
+                        window.location.href = 'resume_form.php';
+                    }, 1500);
+                } else {
+                    form.reset();
+                    const preview = document.getElementById('preview');
+                    preview.innerHTML = '';
 
-                const savedResumesList = document.querySelector('#saved-resumes-list');
-                const noResumesMessage = savedResumesList.querySelector('p');
-                if (noResumesMessage) {
-                    noResumesMessage.remove(); 
+                    const savedResumesList = document.querySelector('#saved-resumes-list');
+                    const noResumesMessage = savedResumesList.querySelector('p');
+                    if (noResumesMessage) {
+                        noResumesMessage.remove();
+                    }
+
+                    const newResume = document.createElement('div');
+                    newResume.className = 'card mb-2';
+                    newResume.setAttribute('data-resume-id', data.resume_id);
+                    newResume.innerHTML = `
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title mb-1">${data.name}</h5>
+                                <p class="card-text">Created: ${data.created_at}</p>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-sm me-2 edit-resume-btn" data-resume-id="${data.resume_id}">Edit</button>
+                                <button class="btn btn-danger btn-sm me-2 delete-resume-btn" data-resume-id="${data.resume_id}">Delete</button>
+                                <button class="btn btn-success btn-sm download-pdf-btn" data-resume-id="${data.resume_id}">Download PDF</button>
+                            </div>
+                        </div>
+                    `;
+                    savedResumesList.insertBefore(newResume, savedResumesList.firstChild); 
+
+                    updateResumeNumbers();
+
+                    bindResumeButtons(newResume);
                 }
-
-                const newResume = document.createElement('div');
-                newResume.className = 'card mb-2';
-                newResume.innerHTML = `
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-1">${data.name}</h5>
-                            <p class="card-text">Created: ${data.created_at}</p>
-                        </div>
-                        <div>
-                            <button class="btn btn-success btn-sm download-pdf-btn" data-resume-id="${data.resume_id}">Download PDF</button>
-                        </div>
-                    </div>
-                `;
-                savedResumesList.insertBefore(newResume, savedResumesList.firstChild); 
-
-                updateResumeNumbers();
-
-                newResume.querySelector('.download-pdf-btn').addEventListener('click', function () {
-                    const resumeId = this.getAttribute('data-resume-id');
-                    const pdfErrorMessage = document.getElementById('pdf-error-message');
-                    const pdfSuccessMessage = document.getElementById('pdf-success-message');
-                    pdfErrorMessage.textContent = '';
-                    pdfErrorMessage.classList.remove('active');
-                    pdfSuccessMessage.textContent = '';
-                    pdfSuccessMessage.classList.remove('active');
-
-                    fetch(`php/generate_pdf.php?resume_id=${resumeId}`, {
-                        method: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        const contentType = response.headers.get('Content-Type');
-                        if (contentType && contentType.includes('application/json')) {
-                            return response.json();
-                        } else {
-                            window.location.href = `php/generate_pdf.php?resume_id=${resumeId}`;
-                            pdfSuccessMessage.textContent = 'PDF downloaded successfully!';
-                            pdfSuccessMessage.classList.add('active');
-                            return null;
-                        }
-                    })
-                    .then(data => {
-                        if (data === null) return;
-                        if (data.success === false) {
-                            pdfErrorMessage.textContent = data.message;
-                            pdfErrorMessage.classList.add('active');
-                        }
-                    })
-                    .catch(error => {
-                        pdfErrorMessage.textContent = 'An error occurred while downloading the PDF: ' + error.message;
-                        pdfErrorMessage.classList.add('active');
-                    });
-                });
             } else {
                 errorMessage.textContent = data.message;
                 errorMessage.classList.add('active');
@@ -180,6 +152,104 @@ if (resumeForm) {
         .catch(error => {
             errorMessage.textContent = 'An error occurred. Please try again.';
             errorMessage.classList.add('active');
+        });
+    });
+}
+
+// Функция для привязки обработчиков к кнопкам Edit, Delete и Download PDF
+function bindResumeButtons(resumeElement) {
+    resumeElement.querySelector('.edit-resume-btn').addEventListener('click', function () {
+        const resumeId = this.getAttribute('data-resume-id');
+        window.location.href = `edit_resume.php?resume_id=${resumeId}`;
+    });
+
+    resumeElement.querySelector('.delete-resume-btn').addEventListener('click', function () {
+        const resumeId = this.getAttribute('data-resume-id');
+        const pdfErrorMessage = document.getElementById('pdf-error-message');
+        const pdfSuccessMessage = document.getElementById('pdf-success-message');
+        pdfErrorMessage.textContent = '';
+        pdfErrorMessage.classList.remove('active');
+        pdfSuccessMessage.textContent = '';
+        pdfSuccessMessage.classList.remove('active');
+
+        if (confirm('Are you sure you want to delete this resume?')) {
+            fetch('php/delete_resume.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `resume_id=${resumeId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    pdfSuccessMessage.textContent = data.message;
+                    pdfSuccessMessage.classList.add('active');
+
+                    const resumeCard = document.querySelector(`.card[data-resume-id="${resumeId}"]`);
+                    if (resumeCard) {
+                        resumeCard.remove();
+                    }
+
+                    const savedResumesList = document.querySelector('#saved-resumes-list');
+                    const remainingCards = savedResumesList.querySelectorAll('.card');
+                    if (remainingCards.length === 0) {
+                        savedResumesList.innerHTML = '<p>No resumes saved yet.</p>';
+                    }
+
+                    updateResumeNumbers();
+                } else {
+                    pdfErrorMessage.textContent = data.message;
+                    pdfErrorMessage.classList.add('active');
+                }
+            })
+            .catch(error => {
+                pdfErrorMessage.textContent = 'An error occurred while deleting the resume: ' + error.message;
+                pdfErrorMessage.classList.add('active');
+            });
+        }
+    });
+
+    // Обработчик для кнопки Download PDF
+    resumeElement.querySelector('.download-pdf-btn').addEventListener('click', function () {
+        const resumeId = this.getAttribute('data-resume-id');
+        const pdfErrorMessage = document.getElementById('pdf-error-message');
+        const pdfSuccessMessage = document.getElementById('pdf-success-message');
+        pdfErrorMessage.textContent = '';
+        pdfErrorMessage.classList.remove('active');
+        pdfSuccessMessage.textContent = '';
+        pdfSuccessMessage.classList.remove('active');
+
+        fetch(`php/generate_pdf.php?resume_id=${resumeId}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                window.location.href = `php/generate_pdf.php?resume_id=${resumeId}`;
+                pdfSuccessMessage.textContent = 'PDF downloaded successfully!';
+                pdfSuccessMessage.classList.add('active');
+                return null;
+            }
+        })
+        .then(data => {
+            if (data === null) return;
+            if (data.success === false) {
+                pdfErrorMessage.textContent = data.message;
+                pdfErrorMessage.classList.add('active');
+            }
+        })
+        .catch(error => {
+            pdfErrorMessage.textContent = 'An error occurred while downloading the PDF: ' + error.message;
+            pdfErrorMessage.classList.add('active');
         });
     });
 }
@@ -200,6 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        // Обработка отправки формы
         registerForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -256,6 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        // Обработка отправки формы
         loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -297,50 +369,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Обработка скачивания PDF
-    document.querySelectorAll('.download-pdf-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const resumeId = this.getAttribute('data-resume-id');
-            const pdfErrorMessage = document.getElementById('pdf-error-message');
-            const pdfSuccessMessage = document.getElementById('pdf-success-message');
-            pdfErrorMessage.textContent = '';
-            pdfErrorMessage.classList.remove('active');
-            pdfSuccessMessage.textContent = '';
-            pdfSuccessMessage.classList.remove('active');
-
-            fetch(`php/generate_pdf.php?resume_id=${resumeId}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const contentType = response.headers.get('Content-Type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json();
-                } else {
-                    window.location.href = `php/generate_pdf.php?resume_id=${resumeId}`;
-                    pdfSuccessMessage.textContent = 'PDF downloaded successfully!';
-                    pdfSuccessMessage.classList.add('active');
-                    return null;
-                }
-            })
-            .then(data => {
-                if (data === null) return;
-                if (data.success === false) {
-                    pdfErrorMessage.textContent = data.message;
-                    pdfErrorMessage.classList.add('active');
-                }
-            })
-            .catch(error => {
-                pdfErrorMessage.textContent = 'An error occurred while downloading the PDF: ' + error.message;
-                pdfErrorMessage.classList.add('active');
-            });
-        });
+    // Привязываем обработчики к существующим кнопкам Edit, Delete и Download PDF
+    document.querySelectorAll('.card').forEach(resumeElement => {
+        bindResumeButtons(resumeElement);
     });
 
+    // Первоначальная нумерация при загрузке страницы
     updateResumeNumbers();
 });

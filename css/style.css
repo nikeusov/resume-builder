@@ -128,6 +128,18 @@ textarea.form-control {
     padding: 5px 0;
 }
 
+/* Стили для сохраненных резюме */
+.save_btns {
+    display: flex;
+}
+
+/* Стили для сохраненных резюме */
+.back-r_btn {
+    width: 100%;
+    max-width: 200px;
+    padding: 8px 20px;
+}
+
 /* Стили для превью */
 .preview-title {
     font-size: 1.2rem;
@@ -219,5 +231,31 @@ textarea.form-control {
     }
     .preview-box {
         height: 300px;
+    }
+}
+
+@media (max-width: 550px) {
+    .save_btns {
+        flex-direction: column;
+    }
+    .edit-resume-btn,
+    .delete-resume-btn,
+    .download-pdf-btn {
+        max-width: 120px;
+        width: 100%;
+        padding: 10px 10px;
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 320px) {
+    .back-btn {
+        width: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    .back-r_btn {
+        max-width: 100%;
+        margin-top: 10px;
     }
 }

@@ -78,13 +78,15 @@ require 'php/db_connect.php';
             $resumes = $stmt->fetchAll();
             if (count($resumes) > 0) {
                 foreach ($resumes as $resume) {
-                    echo '<div class="card mb-2">';
+                    echo '<div class="card mb-2" data-resume-id="' . $resume['id'] . '">';
                     echo '<div class="card-body d-flex justify-content-between align-items-center">';
                     echo '<div>';
                     echo '<h5 class="card-title mb-1">' . htmlspecialchars($resume['name']) . '</h5>';
                     echo '<p class="card-text">Created: ' . $resume['created_at'] . '</p>';
                     echo '</div>';
-                    echo '<div>';
+                    echo '<div class="save_btns">';
+                    echo '<button class="btn btn-primary btn-sm me-2 edit-resume-btn" data-resume-id="' . $resume['id'] . '">Edit</button>';
+                    echo '<button class="btn btn-danger btn-sm me-2 delete-resume-btn" data-resume-id="' . $resume['id'] . '">Delete</button>';
                     echo '<button class="btn btn-success btn-sm download-pdf-btn" data-resume-id="' . $resume['id'] . '">Download PDF</button>';
                     echo '</div>';
                     echo '</div>';
