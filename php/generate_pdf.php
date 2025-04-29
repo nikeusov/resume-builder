@@ -41,4 +41,5 @@ $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
 $dompdf->stream("resume_{$resume['id']}.pdf", ["Attachment" => true]);
+exit;
 ?>

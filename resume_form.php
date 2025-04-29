@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.html");
     exit;
 }
-require 'php/db_connect.php'; 
+require 'php/db_connect.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,8 +67,10 @@ require 'php/db_connect.php';
             </div>
         </div>
 
+        <!-- Список сохраненных резюме -->
         <div class="mt-5">
             <h3>Saved Resumes</h3>
+            <div id="pdf-success-message" class="success-message mb-2"></div>
             <div id="pdf-error-message" class="error-message mb-2"></div>
             <?php
             $stmt = $pdo->prepare("SELECT id, name, created_at FROM resumes WHERE user_id = ?");
