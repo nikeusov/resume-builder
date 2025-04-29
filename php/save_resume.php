@@ -24,8 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['user_id'])) {
     try {
         $stmt = $pdo->prepare("INSERT INTO resumes (user_id, name, email, phone, education, experience, skills, template) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$user_id, $name, $email, $phone, $education, $experience, $skills, $template]);
+        $resume_id = $pdo->lastInsertId(); 
         $response['success'] = true;
         $response['message'] = 'Resume saved successfully!';
+        $response['resume_id'] = $resume_id; 
+        $response['name'] = $name; 
+        $response['created_at'] = date('Y-m-d H:i:s');
     } catch (PDOException $e) {
         $response['message'] = 'Database error: ' . $e->getMessage();
     }

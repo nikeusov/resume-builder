@@ -2,12 +2,45 @@
 <html>
 <head>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .resume-header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; }
-        .resume-section { margin-top: 20px; }
-        h1 { font-size: 24px; margin: 0; }
-        h3 { font-size: 18px; color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-        p { margin: 5px 0; }
+        @font-face {
+            font-family: 'DejaVu Sans';
+            src: url('dompdf/lib/fonts/DejaVuSans.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .resume-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .resume-section {
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 26px;
+            margin: 0;
+        }
+        h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 5px;
+        }
+        p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>

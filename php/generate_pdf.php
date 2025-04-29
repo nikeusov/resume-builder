@@ -36,8 +36,11 @@ ob_start();
 include "../templates/{$resume['template']}.php";
 $html = ob_get_clean();
 
+// Указываем кодировку UTF-8
+$html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
+
 $dompdf = new Dompdf();
-$dompdf->loadHtml($html);
+$dompdf->loadHtml($html, 'UTF-8');
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
 $dompdf->stream("resume_{$resume['id']}.pdf", ["Attachment" => true]);

@@ -34,6 +34,8 @@ if (resumeForm) {
             </div>
         `;
     });
+
+    // Очистка сообщений при изменении полей
     resumeForm.addEventListener('input', function () {
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
@@ -43,6 +45,7 @@ if (resumeForm) {
         successMessage.classList.remove('active');
     });
 
+    // Обработка отправки формы
     resumeForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -84,6 +87,69 @@ if (resumeForm) {
                 form.reset();
                 const preview = document.getElementById('preview');
                 preview.innerHTML = '';
+
+                const savedResumesList = document.querySelector('.mt-5');
+                const noResumesMessage = savedResumesList.querySelector('p');
+                if (noResumesMessage) {
+                    noResumesMessage.remove();
+                }
+
+                const newResume = document.createElement('div');
+                newResume.className = 'card mb-2';
+                newResume.innerHTML = `
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-1">${data.name}</h5>
+                            <p class="card-text">Created: ${data.created_at}</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-success btn-sm download-pdf-btn" data-resume-id="${data.resume_id}">Download PDF</button>
+                        </div>
+                    </div>
+                `;
+                savedResumesList.appendChild(newResume);
+
+                newResume.querySelector('.download-pdf-btn').addEventListener('click', function () {
+                    const resumeId = this.getAttribute('data-resume-id');
+                    const pdfErrorMessage = document.getElementById('pdf-error-message');
+                    const pdfSuccessMessage = document.getElementById('pdf-success-message');
+                    pdfErrorMessage.textContent = '';
+                    pdfErrorMessage.classList.remove('active');
+                    pdfSuccessMessage.textContent = '';
+                    pdfSuccessMessage.classList.remove('active');
+
+                    fetch(`php/generate_pdf.php?resume_id=${resumeId}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        const contentType = response.headers.get('Content-Type');
+                        if (contentType && contentType.includes('application/json')) {
+                            return response.json();
+                        } else {
+                            window.location.href = `php/generate_pdf.php?resume_id=${resumeId}`;
+                            pdfSuccessMessage.textContent = 'PDF downloaded successfully!';
+                            pdfSuccessMessage.classList.add('active');
+                            return null;
+                        }
+                    })
+                    .then(data => {
+                        if (data === null) return;
+                        if (data.success === false) {
+                            pdfErrorMessage.textContent = data.message;
+                            pdfErrorMessage.classList.add('active');
+                        }
+                    })
+                    .catch(error => {
+                        pdfErrorMessage.textContent = 'An error occurred while downloading the PDF: ' + error.message;
+                        pdfErrorMessage.classList.add('active');
+                    });
+                });
             } else {
                 errorMessage.textContent = data.message;
                 errorMessage.classList.add('active');
@@ -168,7 +234,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Обработка отправки формы
         loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -210,49 +275,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-        // Обработка скачивания PDF
-        document.querySelectorAll('.download-pdf-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const resumeId = this.getAttribute('data-resume-id');
-                const pdfErrorMessage = document.getElementById('pdf-error-message');
-                const pdfSuccessMessage = document.getElementById('pdf-success-message');
-                pdfErrorMessage.textContent = '';
-                pdfErrorMessage.classList.remove('active');
-                pdfSuccessMessage.textContent = '';
-                pdfSuccessMessage.classList.remove('active');
-    
-                fetch(`php/generate_pdf.php?resume_id=${resumeId}`, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const contentType = response.headers.get('Content-Type');
-                    if (contentType && contentType.includes('application/json')) {
-                        return response.json();
-                    } else {
-                        window.location.href = `php/generate_pdf.php?resume_id=${resumeId}`;
-                        pdfSuccessMessage.textContent = 'PDF downloaded successfully!';
-                        pdfSuccessMessage.classList.add('active');
-                        return null; 
-                    }
-                })
-                .then(data => {
-                    if (data === null) return;
-    
-                    if (data.success === false) {
-                        pdfErrorMessage.textContent = data.message;
-                        pdfErrorMessage.classList.add('active');
-                    }
-                })
-                .catch(error => {
-                    pdfErrorMessage.textContent = 'An error occurred while downloading the PDF: ' + error.message;
+    // Обработка скачивания PDF
+    document.querySelectorAll('.download-pdf-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const resumeId = this.getAttribute('data-resume-id');
+            const pdfErrorMessage = document.getElementById('pdf-error-message');
+            const pdfSuccessMessage = document.getElementById('pdf-success-message');
+            pdfErrorMessage.textContent = '';
+            pdfErrorMessage.classList.remove('active');
+            pdfSuccessMessage.textContent = '';
+            pdfSuccessMessage.classList.remove('active');
+
+            fetch(`php/generate_pdf.php?resume_id=${resumeId}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const contentType = response.headers.get('Content-Type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    window.location.href = `php/generate_pdf.php?resume_id=${resumeId}`;
+                    pdfSuccessMessage.textContent = 'PDF downloaded successfully!';
+                    pdfSuccessMessage.classList.add('active');
+                    return null;
+                }
+            })
+            .then(data => {
+                if (data === null) return;
+                if (data.success === false) {
+                    pdfErrorMessage.textContent = data.message;
                     pdfErrorMessage.classList.add('active');
-                });
+                }
+            })
+            .catch(error => {
+                pdfErrorMessage.textContent = 'An error occurred while downloading the PDF: ' + error.message;
+                pdfErrorMessage.classList.add('active');
             });
         });
+    });
 });
